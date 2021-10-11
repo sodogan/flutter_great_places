@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'screens/places_list_screen.dart';
+import 'screens/add_place_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,39 +15,18 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'Great places app',
-            ),
-          ],
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(primary: Colors.purple),
         ),
+        primarySwatch: Colors.indigo,
       ),
+      // home: const GreatPlacesOverviewScreen(),
+      initialRoute: '/',
+      routes: {
+        '/': (ctx) => const PlacesListScreen(),
+        AddPlaceScreen.routeName: (ctx) => const AddPlaceScreen()
+      },
+      debugShowCheckedModeBanner: false,
     );
   }
 }
