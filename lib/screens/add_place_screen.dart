@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_great_places/model/place.dart';
+import 'package:flutter_great_places/providers/great_places_list.dart';
 import 'dart:io';
 
 import 'package:flutter_great_places/widgets/image_input.dart';
+import 'package:flutter_great_places/widgets/location_input.dart';
+import 'package:provider/provider.dart';
 
 class AddPlaceScreen extends StatefulWidget {
   static const routeName = '/add-place';
@@ -15,23 +19,41 @@ class _NewPlaceScreenState extends State<AddPlaceScreen> {
   final _formKey = GlobalKey<FormState>();
 
   String? _titleOfthePlace;
-  File? _imagePreview;
+  File? _imageSelected;
 
   void addNewPlace() {
     //Validate the form
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate() || _imageSelected == null) {
+      return;
+    }
 
     //call save
     _formKey.currentState!.save();
 
-    //Make sure that picture is taken
-
     //Make sure that location is chosen
 
     //Go on adding new place
+    final placeListProvider =
+        Provider.of<GreatPlacesList>(context, listen: false);
+    placeListProvider.addNewPlace(
+      pickedTitle: _titleOfthePlace!,
+      pickedImage: _imageSelected!,
+      pickedLocation: PlaceLocation(
+        latitude: 1.23,
+        longtitude: 2.3,
+      ),
+    );
+    Navigator.of(context).pop();
   }
 
-  void takePhoto() {}
+  void onSelectImage({required File imagePicked}) {
+    _imageSelected = imagePicked;
+  }
+
+  void onSelectLocation({required File image}) {
+    _imageSelected = image;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,7 +87,7 @@ class _NewPlaceScreenState extends State<AddPlaceScreen> {
                       ),
                     ),
                     const SizedBox(height: 30),
-                    const ImageInput(),
+                    ImageInput(onSelectImageHandler: onSelectImage),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         vertical: 20.0,
@@ -81,46 +103,7 @@ class _NewPlaceScreenState extends State<AddPlaceScreen> {
                         width: double.infinity,
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        TextButton(
-                          onPressed: addNewPlace,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.grey,
-                              ),
-                            ),
-                            child: const Text(
-                              'Pick a Place',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 18,
-                              ),
-                            ),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: addNewPlace,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.grey,
-                              ),
-                            ),
-                            child: const Text(
-                              'Use Location',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 18,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                      ],
-                    ),
+                    LocationInput(onSelectLocation: onSelectLocation),
                   ],
                 ),
               ),
