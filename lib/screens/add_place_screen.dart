@@ -20,29 +20,34 @@ class _NewPlaceScreenState extends State<AddPlaceScreen> {
 
   String? _titleOfthePlace;
   File? _imageSelected;
+  PlaceLocation? _locationSelected;
+
+  bool isValid() {
+    if (!_formKey.currentState!.validate() ||
+        _imageSelected == null ||
+        _locationSelected == null) {
+      return false;
+    }
+
+    return true;
+  }
 
   void addNewPlace() {
     //Validate the form
-    if (!_formKey.currentState!.validate() || _imageSelected == null) {
+    if (!isValid()) {
       return;
     }
 
     //call save
     _formKey.currentState!.save();
 
-    //Make sure that location is chosen
-
     //Go on adding new place
     final placeListProvider =
         Provider.of<GreatPlacesList>(context, listen: false);
     placeListProvider.addNewPlace(
-      pickedTitle: _titleOfthePlace!,
-      pickedImage: _imageSelected!,
-      pickedLocation: PlaceLocation(
-        latitude: 1.23,
-        longtitude: 2.3,
-      ),
-    );
+        pickedTitle: _titleOfthePlace!,
+        pickedImage: _imageSelected!,
+        pickedLocation: _locationSelected!);
     Navigator.of(context).pop();
   }
 
@@ -50,8 +55,8 @@ class _NewPlaceScreenState extends State<AddPlaceScreen> {
     _imageSelected = imagePicked;
   }
 
-  void onSelectLocation({required File image}) {
-    _imageSelected = image;
+  void onSelectLocation({required PlaceLocation location}) {
+    _locationSelected = location;
   }
 
   @override
@@ -88,28 +93,16 @@ class _NewPlaceScreenState extends State<AddPlaceScreen> {
                     ),
                     const SizedBox(height: 30),
                     ImageInput(onSelectImageHandler: onSelectImage),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 20.0,
-                      ),
-                      child: Container(
-                        height: 150,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                        ),
-                        child: Center(
-                          child: Text('Map Preview'),
-                        ),
-                        width: double.infinity,
-                      ),
-                    ),
                     LocationInput(onSelectLocation: onSelectLocation),
                   ],
                 ),
               ),
             ),
           ),
-          AddPlaceButton(addNewPlace: addNewPlace)
+          AddPlaceButton(
+            addNewPlace: addNewPlace,
+            isValid: isValid(),
+          )
         ],
       ),
     );
@@ -118,10 +111,11 @@ class _NewPlaceScreenState extends State<AddPlaceScreen> {
 
 class AddPlaceButton extends StatelessWidget {
   final Function addNewPlace;
-  const AddPlaceButton({
-    Key? key,
-    required this.addNewPlace,
-  }) : super(key: key);
+  final bool isValid;
+
+  const AddPlaceButton(
+      {Key? key, required this.addNewPlace, required this.isValid})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +129,7 @@ class AddPlaceButton extends StatelessWidget {
         Icons.add,
         size: 35,
       ),
-      onPressed: () => addNewPlace(),
+      onPressed: isValid ? () => addNewPlace() : null,
       label: Text(
         'Add Place',
         textAlign: TextAlign.center,

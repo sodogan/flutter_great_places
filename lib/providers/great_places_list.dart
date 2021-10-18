@@ -4,7 +4,7 @@ import 'dart:collection';
 import 'dart:io';
 
 import '../model/place.dart';
-import '../database/db_helper.dart';
+import '../utility/db_helper.dart';
 
 class GreatPlacesList with ChangeNotifier {
   List<Place> _placesList = [];
@@ -19,7 +19,8 @@ class GreatPlacesList with ChangeNotifier {
       'title': pickedTitle,
       'imagePath': pickedImage.path,
       'latitude': pickedLocation.latitude,
-      'longtitude': pickedLocation.longtitude
+      'longtitude': pickedLocation.longitude,
+      'address': pickedLocation.address
     };
 
     //try to save the place to the SQlLite Database
@@ -51,9 +52,9 @@ class GreatPlacesList with ChangeNotifier {
           id: item['id'],
           title: item['title'],
           location: PlaceLocation(
-            latitude: item['latitude'],
-            longtitude: item['longtitude'],
-          ),
+              latitude: item['latitude'],
+              longtitude: item['longtitude'],
+              address: item['address']),
           image: File(
             item['imagePath'],
           ),
@@ -65,8 +66,16 @@ class GreatPlacesList with ChangeNotifier {
     notifyListeners();
   }
 
+  Place findPlaceByID(int id) {
+    return _placesList.firstWhere((element) => element.id == id);
+  }
+
 //removePlace
-  removePlace({required int index}) {
+  deletePlace({
+    required int index,
+  }) async {
+    //get the id
+    await DBHelper.delete(id: _placesList[index].id);
     _placesList.removeAt(index);
     notifyListeners();
   }

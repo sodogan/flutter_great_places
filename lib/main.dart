@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         routes: {
           '/': (ctx) => const PlacesListScreen(),
           AddPlaceScreen.routeName: (ctx) => const AddPlaceScreen(),
-          PlaceDetailsScreen.routeName: (ctx) => const PlaceDetailsScreen()
+          PlaceDetailsScreen.routeName: (ctx) => PlaceDetailsScreen()
         },
         debugShowCheckedModeBanner: false,
       ),

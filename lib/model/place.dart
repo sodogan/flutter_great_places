@@ -1,27 +1,36 @@
 import 'dart:io';
 
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 class PlaceLocation {
   final double _latitude;
-  final double _longtitude;
-  final String? _address;
+  final double _longitude;
+  final String _address;
 
-  PlaceLocation({
+  const PlaceLocation({
     required double latitude,
     required double longtitude,
-    String? address,
+    required String address,
   })  : _latitude = latitude,
-        _longtitude = longtitude,
+        _longitude = longtitude,
         _address = address;
 
+  const PlaceLocation.none()
+      : _latitude = 37.4228325022329,
+        _longitude = -122.08398242810942,
+        _address = 'GooglePlex Center';
+
   double get latitude => _latitude;
-  double get longtitude => _longtitude;
-  String? get address => _address;
+  double get longitude => _longitude;
+  String get address => _address;
+
+  LatLng get toLatLng => LatLng(_latitude, _longitude);
 
   @override
   String toString() {
     return 'Latitude: $latitude\n'
-        'Lontitude: $longtitude\n'
-        'address: $address\n';
+        'Longitude: $longitude\n'
+        'Address: $address\n';
   }
 }
 
@@ -44,7 +53,7 @@ class Place {
       'title': title,
       'imagePath': image.path,
       'latitude': location.latitude,
-      'longtitude': location.longtitude
+      'longitude': location.longitude
     };
   }
 

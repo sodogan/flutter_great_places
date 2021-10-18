@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart' as hardDrive;
-import 'package:path/path.dart' as pathHelper;
+import '../utility/hard_drive.dart';
+import 'package:path_provider/path_provider.dart' as hard_drive;
+import 'package:path/path.dart' as path_helper;
 
 class ImageInput extends StatefulWidget {
   final Function onSelectImageHandler;
@@ -23,23 +24,20 @@ class _ImageInputState extends State<ImageInput> {
   Future<void> _takePhoto() async {
     final _picker = ImagePicker();
     try {
-      final _imageFile = await _picker.pickImage(
+      final _xImageFile = await _picker.pickImage(
         source: ImageSource.camera,
         maxWidth: 600,
       );
-      if (_imageFile == null) {
+      if (_xImageFile == null) {
         return;
       }
-      final _imageConverted = File(_imageFile.path);
+      final _imageFile = File(_xImageFile.path);
+
+      final _savedImage =
+          await HardDrive.getInstance().copyToDisk(file: _imageFile);
       setState(() {
-        _storedImage = _imageConverted;
+        _storedImage = _savedImage;
       });
-      //copy the file to the hard drive
-      final _directory = await hardDrive.getApplicationDocumentsDirectory();
-      String _path = pathHelper.join(
-          _directory.path, pathHelper.basename(_imageConverted.path));
-      print('Path is $_path');
-      final _savedImage = await _imageConverted.copy(_path);
       //call
       widget.onSelectImageHandler(imagePicked: _savedImage);
     } catch (err) {

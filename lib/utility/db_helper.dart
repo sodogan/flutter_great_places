@@ -4,10 +4,10 @@ import 'package:path/path.dart' as paths;
 class DBHelper {
   static db.Database? _dbHandle;
 
-  static const String dbName = 'places.db';
+  static const String dbName = 'great_places.db';
   static const String tableName = 'Places';
   static const _sql =
-      'CREATE TABLE $tableName (id INTEGER PRIMARY KEY autoincrement, title TEXT not null, imagePath TEXT not null,  longtitude REAL,latitude REAL)';
+      'CREATE TABLE $tableName (id INTEGER PRIMARY KEY autoincrement, title TEXT not null, imagePath TEXT not null,  longtitude REAL not null,latitude REAL not null,address TEXT not null)';
 
   static Future<db.Database?> openDatabase({
     required String dbName,
@@ -28,7 +28,7 @@ class DBHelper {
   static Future<int> insert(
       {String dbName = dbName,
       String tableName = tableName,
-      required Map<String, Object> placeList}) async {
+      required Map<String, Object?> placeList}) async {
     _dbHandle ??= await openDatabase(dbName: dbName);
     //Now try to save the record
     return await _dbHandle!.insert(
@@ -49,7 +49,19 @@ class DBHelper {
     return _list;
   }
 
-  static void deletePlace() {}
+  static Future<int> delete({
+    String dbName = dbName,
+    String tableName = tableName,
+    String columnName = 'id',
+    required int id,
+  }) async {
+    _dbHandle ??= await openDatabase(dbName: dbName);
+
+    // Get the records
+    final _index = await _dbHandle!
+        .delete(tableName, where: '$columnName = ?', whereArgs: [id]);
+    return _index;
+  }
 
   static void closeDatabase() {
     if (_dbHandle != null) {
