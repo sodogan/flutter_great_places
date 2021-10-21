@@ -2,9 +2,10 @@ import 'dart:convert';
 
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
+import 'api_key.dart';
 
 class LocationHelper {
-  static const GOOGLE_API_KEY = 'AIzaSyA4lPLtfRGxN2WB6pzmN3yhSubhwxYZAxE';
+  static const GOOGLE_API_KEY = API_KEY;
   static const GOOGLE_MAPS_BASE_URL =
       'https://maps.googleapis.com/maps/api/staticmap?center=';
 
